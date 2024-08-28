@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logowanie i Formularz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        /* Ukrywamy zawartość strony przed zalogowaniem */
+        #content {
+            display: none;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .checkbox-group label {
+            font-weight: normal;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        #submitted-data {
+            margin-top: 30px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ekran logowania -->
+    <div class="login-form" id="login-form">
+        <h2>Zaloguj się</h2>
+        <form id="login-form-inner">
+            <label for="username">Login:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Hasło:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Zaloguj</button>
+        </form>
+        <p class="error" id="error-message"></p>
+    </div>
+
+    <!-- Zawartość strony (ukryta przed zalogowaniem) -->
+    <div id="content">
+        <h1>Formularz kadrowy</h1>
+        <form id="hr-form">
+            <!-- Dane podstawowe -->
+            <label for="name">Imię i nazwisko:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="position">Stanowisko:</label>
+            <input type="text" id="position" name="position" required>
+
+            <label for="department">Dział:</label>
+            <input type="text" id="department" name="department" required>
+
+            <label for="supervisor">Przełożony:</label>
+            <input type="text" id="supervisor" name="supervisor" required>
+
+            <label for="location">Lokalizacja:</label>
+            <input type="text" id="location" name="location" required>
+
+            <label for="date">Termin:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="access-level">Przewidywany poziom uprawnień:</label>
+            <input type="text" id="access-level" name="access-level">
+
+            <label for="notes">Inne informacje:</label>
+            <textarea id="notes" name="notes"></textarea>
+
+            <!-- Tak/Nie dla zasobów -->
+            <h3>Zasoby do przydzielenia (Tak/Nie):</h3>
+            <div class="checkbox-group">
+                <label for="baseline">Baseline</label>
+                <select id="baseline" name="baseline">
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label for="prestige">Prestiż</label>
+                <select id="prestige" name="prestige">
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label for="monitor">Monitor</label>
+                <select id="monitor" name="monitor">
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label for="computer">Komputer</label>
+                <select id="computer" name="computer">
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label for="monitor-constructor">Monitor konstruktor</label>
+                <select id="monitor-constructor" name="monitor-constructor">
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label for="headphones">Słuchawki</label>
+                <select id="headphones" name="headphones">
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label for="phone">Telefon</label>
+                <select id="phone" name="phone">
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label for="sim">SIM</label>
+                <select id="sim" name="sim">
+                    <option value="tak">Tak</option>
+                    <option value="nie">Nie</option>
+                </select>
+            </div>
+
+            <!-- Przyciski -->
+            <button type="submit">Wyślij</button>
+        </form>
+
+        <!-- Miejsce do wyświetlenia wysłanych danych -->
+        <div id="submitted-data"></div>
+    </div>
+
+    <script>
+        // Statyczne dane logowania
+        const validUsername = "admin";
+        const validPassword = "admin";
+
+        // Formularz logowania
+        const loginForm = document.getElementById('login-form-inner');
+        const errorMessage = document.getElementById('error-message');
+        const content = document.getElementById('content');
+        const loginFormDiv = document.getElementById('login-form');
+
+        // Obsługa logowania
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Zatrzymanie standardowego przesyłania formularza
+
+            // Pobierz dane z formularza logowania
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Sprawdź dane logowania
+            if (username === validUsername && password === validPassword) {
+                // Jeśli dane są poprawne, ukryj ekran logowania i pokaż zawartość strony
+                loginFormDiv.style.display = 'none';
+                content.style.display = 'block';
+            } else {
+                // Wyświetl komunikat o błędzie
+                errorMessage.innerText = 'Błędny login lub hasło. Spróbuj ponownie.';
+            }
+        });
+
+        // Upewnij się, że zawartość strony jest ukryta przed zalogowaniem
+        window.onload = function() {
+            content.style.display = 'none';
+        }
+
+        // Obsługa formularza kadrowego
+        const hrForm = document.getElementById('hr-form');
+        const submittedDataDiv = document.getElementById('submitted-data');
+
+        hrForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Zatrzymanie standardowego przesyłania formularza
+
+            // Zbierz dane z formularza
+            const formData = new FormData(hrForm);
+            let output = "<h3>Wprowadzone dane:</h3><ul>";
+
+            // Iteracja po parach klucz-wartość z formularza
+            formData.forEach((value, key) => {
+                output += `<li><strong>${key}:</strong> ${value}</li>`;
+            });
+            output += "</ul>";
+
+            // Wyświetlenie danych na stronie
+            submittedDataDiv.innerHTML = output;
+        });
+    </script>
+
+</body>
+</html>
